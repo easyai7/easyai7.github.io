@@ -1,55 +1,949 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-  <meta charset="UTF-8">
-  <title>AI와의 신학적 논의 모음</title>
-  <style>
-    body {
-      font-family: "Segoe UI", sans-serif;
-      background-color: #f9f9f9;
-      color: #333;
-      text-align: center;
-      padding: 50px;
-    }
-    h1 {
-      color: #2c3e50;
-    }
-    ul {
-      list-style: none;
-      padding: 0;
-    }
-    li {
-      margin: 15px 0;
-    }
-    a {
-      text-decoration: none;
-      color: #3498db;
-      font-size: 1.2em;
-      transition: color 0.3s;
-    }
-    a:hover {
-      color: #e74c3c;
-    }
-    .box {
-      display: inline-block;
-      padding: 20px 40px;
-      margin: 10px;
-      background: #fff;
-      border-radius: 12px;
-      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>목회자를 위한 AI 활용 강의 - AI목회활용 아카데미</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+        }
+
+        nav {
+            background: linear-gradient(135deg, #1e3a8a 0%, #1e40af 100%);
+            padding: 1rem 0;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+        }
+
+        nav .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 2rem;
+        }
+
+        nav .logo {
+            color: white;
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+
+        nav ul {
+            list-style: none;
+            display: flex;
+            gap: 2rem;
+        }
+
+        nav a {
+            color: white;
+            text-decoration: none;
+            transition: opacity 0.3s;
+        }
+
+        nav a:hover {
+            opacity: 0.8;
+        }
+
+        .hero {
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #334155 100%);
+            color: white;
+            padding: 6rem 2rem;
+            text-align: center;
+        }
+
+        .hero h1 {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        .hero p {
+            font-size: 1.3rem;
+            margin-bottom: 2rem;
+            opacity: 0.9;
+        }
+
+        .hero-slogan {
+            background: rgba(255, 255, 255, 0.15);
+            border: 3px solid white;
+            border-radius: 15px;
+            padding: 1.5rem 2rem;
+            margin: 2rem auto;
+            max-width: 900px;
+            font-size: 1.4rem;
+            font-weight: bold;
+            line-height: 1.6;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { box-shadow: 0 0 20px rgba(255, 255, 255, 0.3); }
+            50% { box-shadow: 0 0 30px rgba(255, 255, 255, 0.5); }
+        }
+
+        .hero-slogan span {
+            color: #fbbf24;
+            font-size: 1.5rem;
+        }
+
+        .btn {
+            display: inline-block;
+            background: white;
+            color: #1e3a8a;
+            padding: 1rem 2.5rem;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: bold;
+            transition: transform 0.3s, box-shadow 0.3s;
+            border: none;
+            cursor: pointer;
+            font-size: 1rem;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(30, 58, 138, 0.3);
+        }
+
+        section {
+            padding: 5rem 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        section h2 {
+            text-align: center;
+            font-size: 2.5rem;
+            margin-bottom: 3rem;
+            color: #1e3a8a;
+        }
+
+        .about {
+            background: #f8f9fa;
+        }
+
+        .about-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+
+        .feature-card {
+            background: white;
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            transition: transform 0.3s, box-shadow 0.3s;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+        }
+
+        .feature-card h3 {
+            color: #1e3a8a;
+            margin-bottom: 1rem;
+            font-size: 1.5rem;
+        }
+
+        .feature-details {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.4s ease;
+            margin-top: 1rem;
+            padding-top: 0;
+        }
+
+        .feature-card.active .feature-details {
+            max-height: 1000px;
+            padding-top: 1rem;
+            border-top: 2px solid #e0e0e0;
+        }
+
+        .feature-details h4 {
+            color: #1e3a8a;
+            margin: 1rem 0 0.5rem 0;
+            font-size: 1.1rem;
+        }
+
+        .feature-details ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .feature-details li {
+            padding: 0.3rem 0;
+            padding-left: 1.5rem;
+            position: relative;
+        }
+
+        .feature-details li:before {
+            content: "→";
+            position: absolute;
+            left: 0;
+            color: #1e3a8a;
+        }
+
+        .click-hint {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            color: #1e3a8a;
+            font-size: 0.9rem;
+            opacity: 0.6;
+        }
+
+        .feature-card.active .click-hint {
+            opacity: 0;
+        }
+
+        .feature-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        .course-intro {
+            text-align: center;
+            font-size: 1.2rem;
+            color: #666;
+            margin-bottom: 3rem;
+        }
+
+        .example-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 2rem;
+        }
+
+        .example-box {
+            background: #f8f9fa;
+            padding: 2rem;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .example-box h3 {
+            color: #1e3a8a;
+            margin: 1rem 0;
+            font-size: 1.3rem;
+        }
+
+        .example-box ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .example-box li {
+            padding: 0.5rem 0;
+            line-height: 1.6;
+        }
+
+        .result-box {
+            background: white;
+            padding: 1rem;
+            margin-top: 1rem;
+            border-radius: 8px;
+            border-left: 4px solid #1e3a8a;
+            color: #1e3a8a;
+            font-weight: 500;
+        }
+
+        .curriculum-list {
+            display: grid;
+            gap: 1.5rem;
+        }
+
+        .curriculum-item {
+            background: white;
+            padding: 2rem;
+            border-left: 5px solid #1e3a8a;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+            border-radius: 5px;
+        }
+
+        .curriculum-item h3 {
+            color: #1e3a8a;
+            margin-bottom: 0.5rem;
+        }
+
+        .week-label {
+            display: inline-block;
+            background: #1e3a8a;
+            color: white;
+            padding: 0.3rem 1rem;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .instructor {
+            background: #f8f9fa;
+        }
+
+        .instructor-main {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .instructor-image {
+            width: 180px;
+            height: 180px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #1e3a8a 0%, #1e40af 100%);
+            margin: 0 auto 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            border: 5px solid white;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+        }
+
+        .instructor-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .instructor-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            text-align: left;
+        }
+
+        .info-box {
+            background: white;
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .info-box h4 {
+            color: #1e3a8a;
+            margin-bottom: 1rem;
+            font-size: 1.3rem;
+        }
+
+        .info-box ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .info-box li {
+            padding: 0.5rem 0;
+            padding-left: 1.5rem;
+            position: relative;
+        }
+
+        .info-box li:before {
+            content: "✓";
+            position: absolute;
+            left: 0;
+            color: #1e3a8a;
+            font-weight: bold;
+        }
+
+        .registration {
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            color: white;
+            text-align: center;
+        }
+
+        .registration h2 {
+            color: white;
+        }
+
+        .registration-info {
+            background: rgba(255,255,255,0.1);
+            padding: 2rem;
+            border-radius: 10px;
+            margin-bottom: 2rem;
+        }
+
+        .registration-info p {
+            font-size: 1.2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .registration-form {
+            max-width: 600px;
+            margin: 0 auto;
+            background: white;
+            padding: 2.5rem;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+            text-align: left;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: #333;
+            font-weight: 500;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 0.8rem;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 1rem;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #1e3a8a;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+
+        .checkbox-group label {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .checkbox-group input {
+            width: auto;
+        }
+
+        .btn-submit {
+            width: 100%;
+            padding: 1.2rem;
+            font-size: 1.1rem;
+            margin-top: 1rem;
+        }
+
+        .faq-item {
+            background: white;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+            border-radius: 8px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+            cursor: pointer;
+        }
+
+        .faq-question {
+            font-weight: bold;
+            color: #1e3a8a;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .faq-answer {
+            color: #666;
+            display: none;
+            padding-top: 0.5rem;
+        }
+
+        .faq-item.active .faq-answer {
+            display: block;
+        }
+
+        footer {
+            background: #2d3748;
+            color: white;
+            text-align: center;
+            padding: 2rem;
+        }
+
+        @media (max-width: 768px) {
+            nav ul {
+                display: none;
+            }
+            .hero h1 {
+                font-size: 2rem;
+            }
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
 </head>
 <body>
-  <h1>📚 AI와의 신학적 논의 모음</h1>
-  <p>아래 링크를 클릭하면 해당 HTML 문서로 이동합니다.</p>
-  
-  <div class="box">
-    <ul>
-      <li><a href="AI와의신학적논의1.html">AI와의 신학적 논의 1</a></li>
-      <li><a href="AI와의신학적논의2.html">AI와의 신학적 논의 2</a></li>
-      <li><a href="AI와의신학적논의3.html">AI와의 신학적 논의 3</a></li>
-    </ul>
-  </div>
+    <nav>
+        <div class="container">
+            <div class="logo">AI목회활용 아카데미</div>
+            <ul>
+                <li><a href="#home">홈</a></li>
+                <li><a href="#about">AI활용영역</a></li>
+                <li><a href="#course">교육내용</a></li>
+                <li><a href="#curriculum">커리큘럼</a></li>
+                <li><a href="#instructor">강사소개</a></li>
+                <li><a href="#registration">수강신청</a></li>
+                <li><a href="#faq">FAQ</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <section id="home" class="hero">
+        <h1>목회자를 위한 AI 활용 강의</h1>
+        <div class="hero-slogan">
+            <span>✋</span> AI는 목회자 도우미 역할에서 멈춥니다<br>
+            <span>절대 목회자를 대체하지 않습니다</span>
+        </div>
+        <p>인공지능으로 사역의 효율을 높이고, 더 많은 시간을 양떼와 함께</p>
+        <a href="#registration" class="btn">지금 신청하기</a>
+    </section>
+
+    <section id="about" class="about">
+        <h2>AI로 가능한 목회 활용 영역</h2>
+        <p style="text-align: center; font-size: 1.1rem; color: #666; margin-bottom: 3rem;">
+            AI 기술을 활용하면 이런 것들이 가능합니다
+        </p>
+        <div class="about-content">
+            <div class="feature-card" onclick="this.classList.toggle('active')">
+                <span class="click-hint">▼ 자세히</span>
+                <div class="feature-icon">📝</div>
+                <h3>설교 준비 시간 단축</h3>
+                <p>AI를 활용한 성경 연구, 퀄리티 높은 논문·신학서적·유명인 저서 등 풍성한 자료 제공, 설교 아이디어 제공<br>
+                <strong style="color: #1e3a8a;">※ 설교 작성은 반드시 목사가 직접 작성</strong></p>
+                <div class="feature-details">
+                    <h4>💡 구체적 활용 예시:</h4>
+                    <ul>
+                        <li>본문 입력 시 10개 이상의 주석서 핵심 요약</li>
+                        <li>헬라어/히브리어 원문 의미 즉시 파악</li>
+                        <li>역사적/문화적 배경 5분 만에 정리</li>
+                        <li>퀄리티 높은 신학 논문 및 학술 자료 검색</li>
+                        <li>유명 신학자들의 저서 핵심 내용 요약</li>
+                        <li>다양한 설교 구조 아이디어 제안</li>
+                        <li>본문에 맞는 현대적 예화 제안</li>
+                        <li>연령별(장년/청년/청소년) 적용점 아이디어</li>
+                    </ul>
+                    <h4>⚠️ 중요:</h4>
+                    <ul>
+                        <li><strong>AI는 자료 수집과 아이디어 제공만 담당</strong></li>
+                        <li><strong>최종 설교문은 목사님이 기도하며 직접 작성</strong></li>
+                        <li><strong>AI는 도구일 뿐, 설교의 주체는 목회자입니다</strong></li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="feature-card" onclick="this.classList.toggle('active')">
+                <span class="click-hint">▼ 자세히</span>
+                <div class="feature-icon">🎉</div>
+                <h3>교회 행사 아이디어 제공</h3>
+                <p>절기별 특별 행사, 전도 이벤트, 청년부 프로그램 등 창의적인 아이디어를 AI가 제안합니다.</p>
+                <div class="feature-details">
+                    <h4>💡 구체적 활용 예시:</h4>
+                    <ul>
+                        <li>부활절/성탄절 특별 행사 30가지 아이디어</li>
+                        <li>전도 이벤트 기획안 (대상, 장소, 프로그램)</li>
+                        <li>청년부 MT/수련회 프로그램 (시간표 포함)</li>
+                        <li>어린이 여름성경학교 주제별 커리큘럼</li>
+                        <li>교회 창립기념일 행사 시나리오</li>
+                        <li>야외예배/소풍 장소 추천 및 프로그램</li>
+                    </ul>
+                    <h4>🎨 추가 기능:</h4>
+                    <ul>
+                        <li>행사 포스터 문구 생성</li>
+                        <li>초대장 문안 작성</li>
+                        <li>행사 당일 진행 순서 작성</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="feature-card" onclick="this.classList.toggle('active')">
+                <span class="click-hint">▼ 자세히</span>
+                <div class="feature-icon">📊</div>
+                <h3>교회 행정 자동화</h3>
+                <p>주보 제작, 공지사항 작성, 이메일 답변 등 반복 업무를 AI로 자동화하세요.</p>
+                <div class="feature-details">
+                    <h4>💡 구체적 활용 예시:</h4>
+                    <ul>
+                        <li>주보 전체 내용 자동 생성 (설교제목, 기도제목, 광고)</li>
+                        <li>주간 일정 입력 시 깔끔한 공지사항으로 변환</li>
+                        <li>교인 문의 이메일 답변 템플릿 자동 생성</li>
+                        <li>월간/연간 사역 보고서 초안 작성</li>
+                        <li>회의록 요약 (3시간 회의 → 1페이지 요약)</li>
+                        <li>감사 편지, 위로 편지 등 각종 서신 작성</li>
+                    </ul>
+                    <h4>⏰ 시간 절약 효과:</h4>
+                    <ul>
+                        <li>주보 제작: 2시간 → 20분</li>
+                        <li>공지사항: 1시간 → 10분</li>
+                        <li>각종 편지: 30분 → 5분</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="feature-card" onclick="this.classList.toggle('active')">
+                <span class="click-hint">▼ 자세히</span>
+                <div class="feature-icon">🎓</div>
+                <h3>교육 콘텐츠 제작</h3>
+                <p>성경공부 자료, 소그룹 교재, 청소년 프로그램을 AI와 함께 빠르게 제작하세요.</p>
+                <div class="feature-details">
+                    <h4>💡 구체적 활용 예시:</h4>
+                    <ul>
+                        <li>12주 성경공부 커리큘럼 완성본 (질문, 토론, 적용 포함)</li>
+                        <li>소그룹 리더 가이드북 작성</li>
+                        <li>청소년부 주제별 토론 자료 (진로, 우정, 사랑 등)</li>
+                        <li>어린이 설교 (10분 분량, 비유 포함)</li>
+                        <li>OX 퀴즈, 빈칸 채우기 등 워크시트</li>
+                        <li>성경 암송 학습지 및 체크리스트</li>
+                    </ul>
+                    <h4>📚 제작 가능한 교재:</h4>
+                    <ul>
+                        <li>새신자 교육 교재 (4주 과정)</li>
+                        <li>세례/입교 준비반 자료</li>
+                        <li>부부 성경공부 교재</li>
+                        <li>직장인 큐티 자료</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="feature-card" onclick="this.classList.toggle('active')">
+                <span class="click-hint">▼ 자세히</span>
+                <div class="feature-icon">🌐</div>
+                <h3>온라인 사역 강화</h3>
+                <p>SNS 콘텐츠, 유튜브 스크립트, 블로그 글 작성을 AI로 효율적으로 관리하세요.</p>
+                <div class="feature-details">
+                    <h4>💡 구체적 활용 예시:</h4>
+                    <ul>
+                        <li>인스타그램 일일 말씀 포스팅 (이미지 문구 포함)</li>
+                        <li>페이스북 주간 교회 소식 포스팅</li>
+                        <li>유튜브 영상 제목/썸네일 문구 (클릭률 UP)</li>
+                        <li>유튜브 설명란 최적화 문안</li>
+                        <li>블로그 신앙 칼럼 (1,500자, SEO 최적화)</li>
+                        <li>카드뉴스 10장 분량 기획 및 문구</li>
+                    </ul>
+                    <h4>📱 SNS 전략:</h4>
+                    <ul>
+                        <li>최적 업로드 시간 제안</li>
+                        <li>해시태그 추천 (20개)</li>
+                        <li>댓글 답변 템플릿</li>
+                        <li>월간 콘텐츠 캘린더 작성</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="feature-card" onclick="this.classList.toggle('active')">
+                <span class="click-hint">▼ 자세히</span>
+                <div class="feature-icon">⚡</div>
+                <h3>실시간 정보 검색</h3>
+                <p>신학 자료, 역사적 배경, 문화적 맥락을 즉시 검색하고 활용하세요.</p>
+                <div class="feature-details">
+                    <h4>💡 구체적 활용 예시:</h4>
+                    <ul>
+                        <li>특정 신학 용어 쉬운 설명 (예: 칭의, 성화, 영화)</li>
+                        <li>성경 시대 역사적 배경 정리</li>
+                        <li>당시 문화/풍습 설명 (예: 혼인 풍습, 장례 절차)</li>
+                        <li>지리적 정보 (예: 갈릴리에서 예루살렘까지 거리)</li>
+                        <li>특정 교리에 대한 교단별 입장 비교</li>
+                        <li>최신 기독교 이슈 정리 (윤리, 사회 문제)</li>
+                    </ul>
+                    <h4>🔍 활용 분야:</h4>
+                    <ul>
+                        <li>설교 중 갑자기 필요한 정보 즉시 검색</li>
+                        <li>성경공부 중 질문에 바로 답변</li>
+                        <li>상담 시 성경 근거 찾기</li>
+                        <li>교리 논쟁 시 균형잡힌 자료 제시</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="course">
+        <h2>이 강의에서 배우는 4가지 핵심 스킬</h2>
+        <p class="course-intro">4주 동안 실전 중심으로 배우고 실습합니다</p>
+        <div class="example-grid">
+            <div class="example-box">
+                <div class="feature-icon">✍️</div>
+                <h3>설교 준비 자료 수집</h3>
+                <ul>
+                    <li>• 본문 분석 및 원문 의미 파악</li>
+                    <li>• 여러 주석서 핵심 내용 정리</li>
+                    <li>• 신학 논문 및 학술 자료 검색</li>
+                    <li>• 유명 신학자 저서 요약</li>
+                    <li>• 현대적 예화 아이디어 제안</li>
+                    <li>• 연령별 적용점 아이디어</li>
+                </ul>
+                <div class="result-box">
+                    💡 자료 수집 시간 대폭 단축, 최종 설교는 목사가 작성
+                </div>
+            </div>
+
+            <div class="example-box">
+                <div class="feature-icon">📋</div>
+                <h3>교회 행정 자동화</h3>
+                <ul>
+                    <li>• 주보 자동 제작</li>
+                    <li>• 공지사항 작성</li>
+                    <li>• 이메일 답변 템플릿</li>
+                    <li>• 회의록 요약 정리</li>
+                    <li>• 사역 보고서 초안 작성</li>
+                </ul>
+                <div class="result-box">
+                    💡 주보 제작 2시간 → 20분으로 단축
+                </div>
+            </div>
+
+            <div class="example-box">
+                <div class="feature-icon">📚</div>
+                <h3>교육 콘텐츠 제작</h3>
+                <ul>
+                    <li>• 성경공부 12주 커리큘럼</li>
+                    <li>• 소그룹 토론 질문 개발</li>
+                    <li>• 청소년 눈높이 자료</li>
+                    <li>• 어린이 설교 준비</li>
+                    <li>• 성경 퀴즈 대량 생성</li>
+                </ul>
+                <div class="result-box">
+                    💡 12주 교재 1주일 → 2시간으로 단축
+                </div>
+            </div>
+
+            <div class="example-box">
+                <div class="feature-icon">📱</div>
+                <h3>온라인 사역 콘텐츠</h3>
+                <ul>
+                    <li>• SNS 포스팅 자동 생성</li>
+                    <li>• 유튜브 영상 기획</li>
+                    <li>• 블로그 신앙 칼럼</li>
+                    <li>• 성경말씀 카드뉴스</li>
+                    <li>• 주간 뉴스레터 작성</li>
+                </ul>
+                <div class="result-box">
+                    💡 주 3회 SNS 업로드 가능
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="curriculum" class="about">
+        <h2>4주 학습 커리큘럼</h2>
+        <p style="text-align: center; font-size: 1.1rem; color: #666; margin-bottom: 3rem;">
+            매주 화요일, 이론과 실습을 함께 진행합니다
+        </p>
+        <div class="curriculum-list">
+            <div class="curriculum-item">
+                <span class="week-label">1주차</span>
+                <h3>AI 기초와 ChatGPT 시작하기</h3>
+                <p>• AI란 무엇인가? 목회에 어떻게 활용할 수 있나<br>
+                   • ChatGPT 가입 및 기본 사용법<br>
+                   • 효과적인 프롬프트 작성 방법<br>
+                   • 실습: 첫 AI 대화 경험하기</p>
+            </div>
+            <div class="curriculum-item">
+                <span class="week-label">2주차</span>
+                <h3>설교 준비를 위한 AI 활용</h3>
+                <p>• 본문 분석과 주석 검색<br>
+                   • 신학 자료 및 학술 논문 찾기<br>
+                   • 예화 및 적용점 아이디어 수집<br>
+                   • 실습: AI로 자료 모으고 목사가 설교 작성하기<br>
+                   <strong style="color: #1e3a8a;">※ AI는 자료 제공, 최종 설교는 목사가 작성</strong></p>
+            </div>
+            <div class="curriculum-item">
+                <span class="week-label">3주차</span>
+                <h3>교회 행정 및 콘텐츠 제작</h3>
+                <p>• 주보, 공지사항 자동 생성<br>
+                   • 이메일 및 문자 메시지 초안 작성<br>
+                   • 성경공부 자료 제작<br>
+                   • 실습: 주보와 교육 자료 만들기</p>
+            </div>
+            <div class="curriculum-item">
+                <span class="week-label">4주차</span>
+                <h3>고급 AI 도구 활용과 윤리</h3>
+                <p>• Claude, Gemini 등 다른 AI 도구 소개<br>
+                   • 이미지 생성 AI 활용법<br>
+                   • AI 사용의 윤리적 고려사항<br>
+                   • 실습: 종합 프로젝트 및 Q&A</p>
+            </div>
+        </div>
+    </section>
+
+    <section id="instructor" class="instructor">
+        <h2>강사 소개</h2>
+        <div class="instructor-main">
+            <div class="instructor-image">
+                <!-- GitHub에 instructor.jpg 업로드 후 아래 src를 실제 URL로 변경하세요 -->
+                <!-- 예: https://사용자명.github.io/저장소명/instructor.jpg -->
+                <img src="instructor.JPG" alt="전승대 목사">
+            </div>
+            <h3>전승대 목사</h3>
+            <p style="color: #666; margin-top: 0.5rem;">은퇴선교사 | AI 목회 전문가 | 디지털 사역 컨설턴트</p>
+        </div>
+        <div class="instructor-grid">
+            <div class="info-box">
+                <h4>💼 주요 경력</h4>
+                <ul>
+                    <li>총신신학대학원 졸업</li>
+                    <li>합동측 대구노회 목사 안수</li>
+                    <li>오빈교회 담임목회 10년</li>
+                    <li>일본 평화교회 초청 사역 2년</li>
+                    <li>GMS(세계선교회) 후원개발국장 2년</li>
+                    <li>일본 선교사 16년</li>
+                    <li>현재 은퇴선교사로 AI 강사 활동</li>
+                    <li>미래 AI 강사로 일본선교 재파송 예정</li>
+                </ul>
+            </div>
+            <div class="info-box">
+                <h4>💻 IT 분야 이력</h4>
+                <ul>
+                    <li>도스시대부터 컴퓨터 시작</li>
+                    <li>PC통신시대 CMA 멀티미디어 초대회장</li>
+                    <li>인터넷시대 멀티엘(회원 2만명) 초대회장</li>
+                    <li>디렉터, 플래시 다년간 강의</li>
+                    <li>합동교단 성경학교 CD 제작</li>
+                    <li>프리젠테이션 도구 학습 CD 제작</li>
+                    <li>일본 한국어교실 학습용 교육CD제작 (70명 5년)</li>
+                    <li>현재 AI 강사 자격 취득을 위한 코딩 학습 중 (자비량 선교를 위해)</li>
+                </ul>
+            </div>
+            <div class="info-box">
+                <h4>🎯 강사의 강점</h4>
+                <ul>
+                    <li>30년 이상의 IT 경험과 목회 경험 융합</li>
+                    <li>도스부터 AI까지 모든 디지털 시대 경험</li>
+                    <li>16년 선교 현장에서의 실전 노하우</li>
+                    <li>복잡한 기술을 쉽게 설명하는 교육 전문가</li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <section id="registration" class="registration">
+        <h2>수강 신청</h2>
+        <div class="registration-info">
+            <p><strong>📅 강의 기간:</strong> 2025년 11월 5일 ~ 11월 26일 (4주)</p>
+            <p><strong>⏰ 시간:</strong> 매주 화요일 오후 7시 ~ 9시</p>
+            <p><strong>📍 장소:</strong> 온라인 ZOOM (녹화 제공)</p>
+            <p><strong>💰 수강료:</strong> 150,000원 (조기 등록 할인 120,000원)</p>
+            <p><strong>👥 정원:</strong> 20명 (선착순 마감)</p>
+        </div>
+        
+        <div class="registration-form">
+            <form id="registrationForm">
+                <div class="form-group">
+                    <label for="name">이름 *</label>
+                    <input type="text" id="name" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="church">교회명 *</label>
+                    <input type="text" id="church" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="position">직책 *</label>
+                    <select id="position" required>
+                        <option value="">선택해주세요</option>
+                        <option value="목사">목사</option>
+                        <option value="전도사">전도사</option>
+                        <option value="강도사">강도사</option>
+                        <option value="사역자">사역자</option>
+                        <option value="기타">기타</option>
+                    </select>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="phone">연락처 *</label>
+                        <input type="tel" id="phone" placeholder="010-1234-5678" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="email">이메일 *</label>
+                        <input type="email" id="email" required>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="motivation">수강 동기 (선택)</label>
+                    <textarea id="motivation" rows="4" placeholder="AI를 배우고 싶은 이유를 간단히 적어주세요"></textarea>
+                </div>
+                
+                <div class="form-group checkbox-group">
+                    <label>
+                        <input type="checkbox" required>
+                        개인정보 수집 및 이용에 동의합니다 *
+                    </label>
+                </div>
+                
+                <button type="submit" class="btn btn-submit">신청하기</button>
+            </form>
+        </div>
+    </section>
+
+    <section id="faq" class="about">
+        <h2>자주 묻는 질문</h2>
+        <div class="faq-item" onclick="this.classList.toggle('active')">
+            <div class="faq-question">
+                컴퓨터를 잘 못해도 수강할 수 있나요? <span>▼</span>
+            </div>
+            <div class="faq-answer">
+                네! 강의는 컴퓨터 기초만 있으면 누구나 들을 수 있도록 설계되었습니다. 기본적인 인터넷 검색과 타이핑만 가능하시면 충분합니다.
+            </div>
+        </div>
+        <div class="faq-item" onclick="this.classList.toggle('active')">
+            <div class="faq-question">
+                AI 사용에 비용이 드나요? <span>▼</span>
+            </div>
+            <div class="faq-answer">
+                ChatGPT는 무료 버전으로도 충분히 활용 가능합니다. 더 많은 기능이 필요하신 경우 유료 버전($20/월)을 선택하실 수 있지만, 강의 중에는 무료 버전으로 진행됩니다.
+            </div>
+        </div>
+        <div class="faq-item" onclick="this.classList.toggle('active')">
+            <div class="faq-question">
+                강의를 놓치면 어떻게 하나요? <span>▼</span>
+            </div>
+            <div class="faq-answer">
+                모든 강의는 녹화되어 제공되므로 못 들으신 부분은 언제든 다시 보실 수 있습니다. 녹화 영상은 강의 종료 후 3개월간 제공됩니다.
+            </div>
+        </div>
+        <div class="faq-item" onclick="this.classList.toggle('active')">
+            <div class="faq-question">
+                AI가 설교를 대신 써주나요? <span>▼</span>
+            </div>
+            <div class="faq-answer">
+                아닙니다. AI는 자료 검색, 아이디어 발굴, 초안 작성 등을 '도와주는' 도구입니다. 최종 설교는 목회자님의 영성과 통찰로 완성됩니다.
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <p style="font-size: 1.2rem; font-weight: bold; margin-bottom: 1rem; color: #fbbf24;">
+            ✋ AI는 목회자 도우미, 절대 대체하지 않습니다
+        </p>
+        <p>&copy; 2025 AI목회활용 아카데미. All rights reserved.</p>
+        <p>문의: pastor.ai@example.com | 전화: 010-XXXX-XXXX</p>
+    </footer>
+
+    <script>
+        document.getElementById('registrationForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            alert('수강 신청이 완료되었습니다!\n\n입력하신 이메일로 상세 안내를 보내드리겠습니다.\n감사합니다!');
+            this.reset();
+        });
+    </script>
 </body>
 </html>
