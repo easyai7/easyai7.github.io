@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -397,65 +396,45 @@
             margin-bottom: 0.5rem;
         }
 
-        .registration-form {
+        .registration-button {
             max-width: 600px;
             margin: 0 auto;
             background: white;
-            padding: 2.5rem;
+            padding: 3rem 2.5rem;
             border-radius: 15px;
             box-shadow: 0 10px 30px rgba(0,0,0,0.2);
         }
 
-        .form-group {
+        .registration-button h3 {
+            color: #1e3a8a;
+            font-size: 1.8rem;
             margin-bottom: 1.5rem;
-            text-align: left;
         }
 
-        .form-group label {
-            display: block;
-            margin-bottom: 0.5rem;
-            color: #333;
-            font-weight: 500;
-        }
-
-        .form-group input,
-        .form-group select,
-        .form-group textarea {
-            width: 100%;
-            padding: 0.8rem;
-            border: 2px solid #e0e0e0;
-            border-radius: 8px;
-            font-size: 1rem;
-        }
-
-        .form-group input:focus,
-        .form-group select:focus,
-        .form-group textarea:focus {
-            outline: none;
-            border-color: #1e3a8a;
-        }
-
-        .form-row {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 1rem;
-        }
-
-        .checkbox-group label {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-
-        .checkbox-group input {
-            width: auto;
-        }
-
-        .btn-submit {
-            width: 100%;
-            padding: 1.2rem;
+        .registration-button p {
+            color: #666;
             font-size: 1.1rem;
-            margin-top: 1rem;
+            margin-bottom: 2rem;
+            line-height: 1.8;
+        }
+
+        .btn-large {
+            display: inline-block;
+            background: #1e3a8a;
+            color: white;
+            padding: 1.5rem 3rem;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 1.3rem;
+            transition: transform 0.3s, box-shadow 0.3s;
+            box-shadow: 0 5px 20px rgba(30, 58, 138, 0.3);
+        }
+
+        .btn-large:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(30, 58, 138, 0.4);
+            background: #1e40af;
         }
 
         .faq-item {
@@ -497,9 +476,6 @@
             }
             .hero h1 {
                 font-size: 2rem;
-            }
-            .form-row {
-                grid-template-columns: 1fr;
             }
         }
     </style>
@@ -803,8 +779,6 @@
         <h2>강사 소개</h2>
         <div class="instructor-main">
             <div class="instructor-image">
-                <!-- GitHub에 instructor.jpg 업로드 후 아래 src를 실제 URL로 변경하세요 -->
-                <!-- 예: https://사용자명.github.io/저장소명/instructor.jpg -->
                 <img src="instructor.JPG" alt="전승대 목사">
             </div>
             <h3>전승대 목사</h3>
@@ -863,56 +837,12 @@
             <p style="font-size: 0.95rem;">※ 입금 후 이메일(aomori91@naver.com) 또는 문자(010-5840-9074)로<br>성함과 입금자명을 알려주세요</p>
         </div>
         
-        <div class="registration-form">
-            <form id="registrationForm">
-                <div class="form-group">
-                    <label for="name">이름 *</label>
-                    <input type="text" id="name" required>
-                </div>
-                
-                <div class="form-group">
-                    <label for="church">교회명 *</label>
-                    <input type="text" id="church" required>
-                </div>
-                
-                <div class="form-group">
-                    <label for="position">직책 *</label>
-                    <select id="position" required>
-                        <option value="">선택해주세요</option>
-                        <option value="목사">목사</option>
-                        <option value="전도사">전도사</option>
-                        <option value="강도사">강도사</option>
-                        <option value="사역자">사역자</option>
-                        <option value="기타">기타</option>
-                    </select>
-                </div>
-                
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="phone">연락처 *</label>
-                        <input type="tel" id="phone" placeholder="010-1234-5678" required>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="email">이메일 *</label>
-                        <input type="email" id="email" required>
-                    </div>
-                </div>
-                
-                <div class="form-group">
-                    <label for="motivation">수강 동기 (선택)</label>
-                    <textarea id="motivation" rows="4" placeholder="AI를 배우고 싶은 이유를 간단히 적어주세요"></textarea>
-                </div>
-                
-                <div class="form-group checkbox-group">
-                    <label>
-                        <input type="checkbox" required>
-                        개인정보 수집 및 이용에 동의합니다 *
-                    </label>
-                </div>
-                
-                <button type="submit" class="btn btn-submit">신청하기</button>
-            </form>
+        <div class="registration-button">
+            <h3>🎓 수강 신청하기</h3>
+            <p>아래 버튼을 클릭하시면<br>수강 신청 양식으로 이동합니다</p>
+            <a href="https://docs.google.com/forms/d/e/1FAIpQLSfheYoLaAQjTa2lme6uDmXflnoTxbEtoMlf-QnwLQTBhA1t0A/viewform" target="_blank" class="btn-large">
+                📝 신청 양식 작성하기
+            </a>
         </div>
     </section>
 
@@ -959,14 +889,5 @@
         <p>&copy; 2025 AI목회활용 아카데미. All rights reserved.</p>
         <p>문의: aomori91@naver.com | 전화: 010-5840-9074</p>
     </footer>
-
-    <script>
-        document.getElementById('registrationForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            alert('수강 신청이 완료되었습니다!\n\n입력하신 이메일로 상세 안내를 보내드리겠습니다.\n감사합니다!');
-            this.reset();
-        });
-    </script>
 </body>
 </html>
-
