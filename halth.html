@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>운동 관리 프로그램</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<style>
+  :root{
+    --bg:#e0e0e0;
+    --panel:#6b7a94;
+    --group:#8a99b3;
+    --btn:#5a6b85;
+    --accent:#fbbf24;
+    --muted:#e3f2fd;
+    --save:#10b981;
+    --danger:#ef4444;
+  }
+  *{box-sizing:border-box}
+  body { font-family: 'Malgun Gothic', 'Noto Sans KR', sans-serif; background:var(--bg); margin:0; padding:20px; }
+  .container { max-width:920px; margin:0 auto; background:var(--panel); border-radius:30px; padding:36px; box-shadow:0 20px 60px rgba(0,0,0,0.25); }
+  h1{ color:#fff; text-align:center; margin:0 0 6px; font-size:2rem; }
+  .subtitle{ color:#fff; text-align:center; margin:0 0 24px; font-size:1.05rem; opacity:0.95; }
+  h3 { font-size:1.15rem; color:#fff; margin:0 0 12px; }
+  .exercise-group{ background:var(--group); border-radius:16px; padding:18px; margin-bottom:18px; box-shadow: inset 0 -8px 18px rgba(0,0,0,0.06); }
+  .btn-row{ display:flex; flex-wrap:wrap; gap:8px; }
+  .exercise-btn{ padding:10px 14px; margin:0; background:var(--btn); color:var(--muted); border:none; border-radius:10px; cursor:pointer; font-size:1rem; transition:all .16s; box-shadow: 0 6px 14px rgba(0,0,0,0.12); }
+  .exercise-btn:active{ transform:translateY(1px); }
+  .exercise-btn.active{ background:var(--accent); color:#000; font-weight:700; box-shadow: 0 8px 18px rgba(0,0,0,0.18); }
+  .note-section{ margin-top:6px; margin-bottom:18px; }
+  .note-section label{ font-size:1.05rem; color:#fff; display:block; margin-bottom:8px; }
+  .note-section textarea{ width:100%; min-height:96px; border-radius:10px; padding:12px; border:none; font-size:1rem; font-family: inherit; resize:vertical; }
+  .score-card{ background:var(--btn); color:#fff; text-align:center; padding:20px; border-radius:14px; margin:18px 0; font-size:1.4rem; font-weight:700; }
+  .score-card small{ display:block; font-size:0.85rem; font-weight:400; opacity:0.9; margin-top:6px; }
+  .save-btn{ width:100%; padding:14px 18px; background:var(--save); color:#fff; border:none; border-radius:10px; cursor:pointer; font-size:1.05rem; font-weight:700; box-shadow:0 10px 24px rgba(16,185,129,0.18); }
+  .record-list{ background:var(--group); border-radius:12px; padding:10px; max-height:340px; overflow-y:auto; margin-top:10px; }
+  .record-item{ display:flex; justify-content:space-between; align-items:center; padding:12px; border-bottom:1px solid rgba(255,255,255,0.12); font-size:0.98rem; color:#fff; gap:12px; }
+  .record-item:last-child{ border-bottom:none; }
+  .delete-btn{ background:var(--danger); color:#fff; border:none; padding:8px 12px; border-radius:8px; cursor:pointer; font-size:0.95rem; }
+  .empty-state{ text-align:center; color:#fff; font-size:1rem; padding:24px; opacity:0.95; }
+  canvas{ width:100% !important; height:280px !important; display:block; margin-top:18px; border-radius:12px; padding:8px; box-shadow: inset 0 -8px 12px rgba(0,0,0,0.06); }
+  @media (max-width:600px){
+    .container{ padding:18px; border-radius:18px; }
+    h1{ font-size:1.5rem; }
+    .score-card{ font-size:1.2rem; }
+  }
+</style>
+</head>
+<body>
+<div class="container">
+  <h1>🏆 운동 관리 프로그램</h1>
+  <p class="subtitle">건강한 습관, 더 나은 내일 — 세트 선택 후 저장하세요</p>
+
+  <div class="exercise-group">
+    <h3>팔굽혀펴기 (5세트 / 20점)</h3>
+    <div id="pushupButtons" class="btn-row"></div>
+  </div>
+
+  <div class="exercise-group">
+    <h3>윗몸일으키기 (5세트 / 24점)</h3>
+    <div id="situpButtons" class="btn-row"></div>
+  </div>
+
+  <div class="exercise-group">
+    <h3>스쿼트 (5세트 / 25점)</h3>
+    <div id="squatButtons" class="btn-row"></div>
+  </div>
+
+  <div class="exercise-group">
+    <h3>걷기 (1세트 / 31점)</h3>
+    <div id="walkButtons" class="btn-row"></div>
+  </div>
+
+  <div class="note-section">
+    <label>📝 운동 메모</label>
+    <textarea id="note" placeholder="오늘 운동에 대한 메모 (선택)"></textarea>
+  </div>
+
+  <div class="score-card">
+    오늘 점수: <span id="scoreDisplay">0점</span>
+    <small id="scoreHint">세트를 선택하면 점수가 실시간 반영됩니다.</small>
+  </div>
+
+  <button class="save-btn" id="saveBtn">저장</button>
+
+  <h3 style="margin-top:22px; font-size:1.05rem; color:#fff;">📋 기록</h3>
+  <div class="record-list" id="recordList">
+    <div class="empty-state">아직 기록이 없습니다 💪</div>
+  </div>
+
+  <canvas id="scoreChart" aria-label="점수 그래프" role="img"></canvas>
+</div>
+
+<script>
+/* Exercise Manager */
+const exerciseApp = {
+  records: [],
+  chart: null,
+  storageKey: 'exerciseRecords_v1',
+
+  init() {
+    this.loadData();
+    this.createButtons();
+    this.attachEventListeners();
+    this.updateScore();
+    this.updateRecordList();
+    this.updateChart();
+  },
+
+  loadData() {
+    try {
+      const saved = localStorage.getItem(this.storageKey);
+      if (saved) this.records = JSON.parse(saved);
+    } catch (e) {
+      console.error('loadData error', e);
+      this.records = [];
+    }
+  },
+
+  saveData() {
+    try {
+      localStorage.setItem(this.storageKey, JSON.stringify(this.records));
+    } catch (e) {
+      console.error('saveData error', e);
+    }
+  },
+
+  createButtons() {
+    this.createExerciseButtons('pushupButtons', 5);
+    this.createExerciseButtons('situpButtons', 5);
+    this.createExerciseButtons('squatButtons', 5);
+    this.createExerciseButtons('walkButtons', 1);
+  },
+
+  createExerciseButtons(id, count) {
+    const container = document.getElementById(id);
+    container.innerHTML = '';
+    for (let i = 1; i <= count; i++) {
+      const btn = document.createElement('button');
+      btn.className = 'exercise-btn';
+      btn.textContent = i + '세트';
+      btn.type = 'button';
+      btn.addEventListener('click', () => {
+        btn.classList.toggle('active');
+        this.updateScore();
+      });
+      container.appendChild(btn);
+    }
+  },
+
+  calculateScore() {
+    const pushup = document.querySelectorAll('#pushupButtons .active').length;
+    const situp  = document.querySelectorAll('#situpButtons .active').length;
+    const squat  = document.querySelectorAll('#squatButtons .active').length;
+    const walk   = document.querySelectorAll('#walkButtons .active').length;
+    // 점수 비중 계산
+    const score = Math.round((pushup / 5) * 20 + (situp / 5) * 24 + (squat / 5) * 25 + (walk / 1) * 31);
+    return Number.isFinite(score) ? score : 0;
+  },
+
+  updateScore() {
+    document.getElementById('scoreDisplay').textContent = this.calculateScore() + '점';
+  },
+
+  saveRecord() {
+    const score = this.calculateScore();
+    if (score === 0) {
+      // 0점은 저장하지 않음 — UX 상 알림은 화면에서 간단히 처리
+      this.showTemporaryHint('1세트 이상 선택해야 저장됩니다.');
+      return;
+    }
+    const note = document.getElementById('note').value.trim();
+    const now = new Date();
+    const record = {
+      id: Date.now(),
+      date: now.toLocaleDateString(),
+      time: now.toLocaleTimeString(),
+      score,
+      note,
+      timestamp: now.getTime()
+    };
+    this.records.push(record);
+    this.saveData();
+    // 기본 UI 초기화
+    document.querySelectorAll('.exercise-btn').forEach(b => b.classList.remove('active'));
+    document.getElementById('note').value = '';
+    this.updateScore();
+    this.updateRecordList();
+    this.updateChart();
+    this.showTemporaryHint('저장되었습니다! 💪');
+  },
+
+  deleteRecord(id) {
+    // 삭제는 직관적으로 즉시 실행
+    this.records = this.records.filter(r => r.id !== id);
+    this.saveData();
+    this.updateRecordList();
+    this.updateChart();
+    this.showTemporaryHint('기록이 삭제되었습니다.');
+  },
+
+  updateRecordList() {
+    const list = document.getElementById('recordList');
+    if (!this.records || this.records.length === 0) {
+      list.innerHTML = '<div class="empty-state">아직 기록이 없습니다 💪</div>';
+      document.getElementById('scoreDisplay').textContent = '0점';
+      if (this.chart) this.chart.destroy();
+      return;
+    }
+    // 최신순으로 표시
+    const sorted = this.records.slice().sort((a, b) => b.timestamp - a.timestamp);
+    list.innerHTML = '';
+    sorted.forEach(r => {
+      const item = document.createElement('div');
+      item.className = 'record-item';
+      const left = document.createElement('div');
+      left.style.flex = '1';
+      left.innerHTML = `<strong style="display:block">${r.date} ${r.time}</strong>${r.note ? `<div style="margin-top:6px; opacity:0.95">📝 ${this.escapeHtml(r.note)}</div>` : ''}`;
+      const right = document.createElement('div');
+      right.style.display = 'flex';
+      right.style.alignItems = 'center';
+      right.style.gap = '10px';
+      right.innerHTML = `<strong>${r.score}점</strong>`;
+      const del = document.createElement('button');
+      del.className = 'delete-btn';
+      del.type = 'button';
+      del.textContent = '삭제';
+      del.addEventListener('click', () => this.deleteRecord(r.id));
+      right.appendChild(del);
+      item.appendChild(left);
+      item.appendChild(right);
+      list.appendChild(item);
+    });
+  },
+
+  updateChart() {
+    const ctx = document.getElementById('scoreChart').getContext('2d');
+    if (!this.records || this.records.length === 0) {
+      if (this.chart) {
+        this.chart.destroy();
+        this.chart = null;
+      }
+      // 빈 캔버스 초기화 (투명)
+      ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+      return;
+    }
+    // 오름차순(시간순)으로 표시
+    const sorted = this.records.slice().sort((a, b) => a.timestamp - b.timestamp);
+    const labels = sorted.map(r => `${r.date}\n${r.time}`);
+    const data = sorted.map(r => r.score);
+
+    if (this.chart) this.chart.destroy();
+    this.chart = new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels,
+        datasets: [{
+          label: '점수',
+          data,
+          borderColor: '#fbbf24',
+          backgroundColor: 'rgba(251,191,36,0.18)',
+          fill: true,
+          borderWidth: 3,
+          pointRadius: 5,
+          tension: 0.25
+        }]
+      },
+      options: {
+        maintainAspectRatio: false,
+        plugins: {
+          legend: { labels: { font: { size: 12 } } },
+          tooltip: { mode: 'index', intersect: false }
+        },
+        scales: {
+          x: {
+            ticks: { font: { size: 11 }, maxRotation: 30, minRotation: 0 },
+            grid: { display: false }
+          },
+          y: {
+            beginAtZero: true,
+            ticks: { font: { size: 12 } }
+          }
+        }
+      }
+    });
+  },
+
+  attachEventListeners() {
+    document.getElementById('saveBtn').addEventListener('click', () => this.saveRecord());
+    // 엔터로 저장 (메모 입력 중)
+    document.getElementById('note').addEventListener('keydown', (e) => {
+      if (e.ctrlKey && e.key === 'Enter') {
+        e.preventDefault();
+        this.saveRecord();
+      }
+    });
+  },
+
+  showTemporaryHint(message, duration = 1400) {
+    // 상단의 subtitle을 잠깐 바꿔서 피드백 제공
+    const subtitle = document.querySelector('.subtitle');
+    const original = subtitle.textContent;
+    subtitle.textContent = message;
+    subtitle.style.opacity = '1';
+    clearTimeout(this._hintTimer);
+    this._hintTimer = setTimeout(() => {
+      subtitle.textContent = original;
+    }, duration);
+  },
+
+  escapeHtml(text) {
+    // 간단한 XSS 방지
+    return text.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  }
+};
+
+document.addEventListener('DOMContentLoaded', () => exerciseApp.init());
+</script>
+</body>
+</html>
