@@ -1,0 +1,710 @@
+
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>운동 관리 프로그램</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<style>
+:root{
+  --bg:#e0e0e0;
+  --panel:#6b7a94;
+  --group:#8a99b3;
+  --btn:#5a6b85;
+  --accent:#fbbf24;
+  --muted:#e3f2fd;
+  --save:#10b981;
+  --danger:#ef4444;
+  --today:#4ade80;
+}
+*{box-sizing:border-box}
+body { font-family: 'Malgun Gothic','Noto Sans KR',sans-serif; background:var(--bg); margin:0; padding:20px;}
+.container { max-width:920px; margin:0 auto; background:var(--panel); border-radius:30px; padding:36px; box-shadow:0 20px 60px rgba(0,0,0,0.25);}
+h1{ color:#fff; text-align:center; margin:0 0 6px; font-size:2rem;}
+.subtitle{ color:#fff; text-align:center; margin:0 0 24px; font-size:1.05rem; opacity:0.95;}
+h3{ font-size:1.15rem; color:#fff; margin:0 0 12px;}
+
+.today-status {
+  background: var(--today);
+  color: #000;
+  padding: 15px;
+  border-radius: 12px;
+  margin-bottom: 20px;
+  text-align: center;
+  font-weight: bold;
+  font-size: 1.1rem;
+}
+
+.exercise-group{ background:var(--group); border-radius:16px; padding:18px; margin-bottom:18px; box-shadow: inset 0 -8px 18px rgba(0,0,0,0.06); position:relative;}
+.completed-badge{ position:absolute; top:10px; right:10px; background:var(--today); color:#000; padding:4px 10px; border-radius:20px; font-size:0.85rem; font-weight:bold;}
+.btn-row{ display:flex; flex-wrap:wrap; gap:8px;}
+.exercise-btn{ padding:10px 14px; margin:0; background:var(--btn); color:var(--muted); border:none; border-radius:10px; cursor:pointer; font-size:1rem; transition:all .16s; box-shadow:0 6px 14px rgba(0,0,0,0.12);}
+.exercise-btn:active{ transform:translateY(1px);}
+.exercise-btn.active{ background:var(--accent); color:#000; font-weight:700; box-shadow:0 8px 18px rgba(0,0,0,0.18);}
+.exercise-btn.completed{ background:#86efac; color:#000; font-weight:700;}
+
+.note-section{ margin-top:6px; margin-bottom:18px;}
+.note-section label{ font-size:1.05rem; color:#fff; display:block; margin-bottom:8px;}
+.note-section textarea{ width:100%; min-height:96px; border-radius:10px; padding:12px; border:none; font-size:1rem; font-family: inherit; resize:vertical;}
+
+.score-card{ background:var(--btn); color:#fff; text-align:center; padding:20px; border-radius:14px; margin:18px 0; font-size:1.4rem; font-weight:700;}
+.score-card small{ display:block; font-size:0.85rem; font-weight:400; opacity:0.9; margin-top:6px;}
+.score-progress { display:flex; justify-content:space-around; margin-top:10px; font-size:0.9rem; }
+
+.save-btn, .reset-btn, .backup-btn, .restore-btn{ width:100%; padding:14px 18px; border:none; border-radius:10px; cursor:pointer; font-size:1.05rem; font-weight:700; margin-bottom:6px;}
+.save-btn{ background:var(--save); color:#fff; box-shadow:0 10px 24px rgba(16,185,129,0.18);}
+.reset-btn{ background:#f59e0b; color:#fff; box-shadow:0 10px 24px rgba(245,158,11,0.18);}
+.backup-btn{ background:#3b82f6; color:#fff; box-shadow:0 10px 24px rgba(59,130,246,0.18);}
+.restore-btn{ background:#6366f1; color:#fff; box-shadow:0 10px 24px rgba(99,102,241,0.18);}
+
+.record-list{ background:var(--group); border-radius:12px; padding:10px; max-height:340px; overflow-y:auto; margin-top:10px;}
+.record-item{ display:flex; justify-content:space-between; align-items:center; padding:12px; border-bottom:1px solid rgba(255,255,255,0.12); font-size:0.98rem; color:#fff; gap:12px;}
+.record-item.today { background:rgba(74,222,128,0.2); border-radius:8px; margin-bottom:5px;}
+.record-item:last-child{ border-bottom:none;}
+.delete-btn{ background:var(--danger); color:#fff; border:none; padding:8px 12px; border-radius:8px; cursor:pointer; font-size:0.95rem;}
+.edit-btn{ background:#f59e0b; color:#fff; border:none; padding:8px 12px; border-radius:8px; cursor:pointer; font-size:0.95rem; margin-right:5px;}
+
+.empty-state{ text-align:center; color:#fff; font-size:1rem; padding:24px; opacity:0.95;}
+.stats-info{ background:rgba(255,255,255,0.1); border-radius:10px; padding:12px; margin:10px 0; color:#fff; font-size:0.9rem; text-align:center;}
+canvas{ width:100% !important; height:280px !important; display:block; margin-top:18px; border-radius:12px; padding:8px; box-shadow: inset 0 -8px 12px rgba(0,0,0,0.06);}
+
+.storage-warning {
+  background: #fbbf24;
+  color: #000;
+  padding: 10px;
+  border-radius: 8px;
+  margin: 10px 0;
+  font-size: 0.9rem;
+  display: none;
+}
+
+@media (max-width:600px){.container{padding:18px;border-radius:18px;}h1{font-size:1.5rem;}.score-card{font-size:1.2rem;}}
+</style>
+</head>
+<body>
+<div class="container">
+<h1>🏆 운동 관리 프로그램</h1>
+<p class="subtitle">체크하는 즉시 자동 저장 | 틈틈이 운동 누적 기록</p>
+
+<div class="today-status" id="todayStatus">
+  오늘 날짜 확인 중...
+</div>
+
+<div class="storage-warning" id="storageWarning">
+  ⚠️ 데이터 저장 실패 - Chrome 설정을 확인하세요
+</div>
+
+<div class="exercise-group" id="pushupGroup">
+<h3>팔굽혀펴기 (5세트 / 20점)</h3>
+<div id="pushupButtons" class="btn-row"></div>
+</div>
+
+<div class="exercise-group" id="situpGroup">
+<h3>윗몸일으키기 (5세트 / 24점)</h3>
+<div id="situpButtons" class="btn-row"></div>
+</div>
+
+<div class="exercise-group" id="squatGroup">
+<h3>스쿼트 (5세트 / 25점)</h3>
+<div id="squatButtons" class="btn-row"></div>
+</div>
+
+<div class="exercise-group" id="walkGroup">
+<h3>걷기 (1세트 / 31점)</h3>
+<div id="walkButtons" class="btn-row"></div>
+</div>
+
+<div class="note-section">
+<label>📝 오늘 운동 메모</label>
+<textarea id="note" placeholder="오늘 운동에 대한 메모 (선택)"></textarea>
+</div>
+
+<div class="score-card">
+현재 누적 점수: <span id="scoreDisplay">0점</span>
+<div class="score-progress">
+  <span>팔: <span id="pushupScore">0</span></span>
+  <span>윗몸: <span id="situpScore">0</span></span>
+  <span>스쿼트: <span id="squatScore">0</span></span>
+  <span>걷기: <span id="walkScore">0</span></span>
+</div>
+<small id="scoreHint">체크만 해도 자동 저장 | 누적 저장으로 오늘 기록 확정</small>
+</div>
+
+<button class="save-btn" id="saveBtn">✅ 누적 저장 (오늘 운동 업데이트)</button>
+<button class="reset-btn" id="resetBtn">🔄 오늘 운동 초기화</button>
+<button class="backup-btn" id="backupBtn">💾 전체 기록 백업</button>
+<input type="file" id="restoreInput" accept=".json" style="display:none"/>
+<button class="restore-btn" id="restoreBtn">📂 백업 불러오기</button>
+
+<div class="stats-info" id="statsInfo"></div>
+
+<h3 style="margin-top:22px; font-size:1.05rem; color:#fff;">📋 운동 기록</h3>
+<div class="record-list" id="recordList">
+<div class="empty-state">아직 기록이 없습니다 💪</div>
+</div>
+
+<canvas id="scoreChart" aria-label="점수 그래프" role="img"></canvas>
+</div>
+
+<script>
+const exerciseApp = {
+  records: [], 
+  todayData: null,
+  chart: null, 
+  storageKey: 'exerciseRecords_v3',
+  todayKey: '',
+
+  init() {
+    console.log('앱 초기화 시작');
+    this.testStorage();
+    this.setTodayKey();
+    this.loadData();
+    this.createButtons();
+    this.loadTempState(); // 임시 저장 상태 복원
+    this.attachEventListeners();
+    this.loadTodayData();
+    this.updateAllUI();
+  },
+
+  testStorage() {
+    try {
+      localStorage.setItem('test', '1');
+      localStorage.removeItem('test');
+      console.log('✅ localStorage 정상 작동');
+    } catch(e) {
+      console.error('❌ localStorage 오류:', e);
+      document.getElementById('storageWarning').style.display = 'block';
+      document.getElementById('storageWarning').innerHTML = `
+        ⚠️ Chrome 설정 확인 필요:<br>
+        1. Chrome 설정 > 사이트 설정 > 쿠키<br>
+        2. "모든 쿠키 허용" 선택<br>
+        3. 시크릿 모드가 아닌지 확인
+      `;
+    }
+  },
+
+  setTodayKey() {
+    const today = new Date();
+    this.todayKey = `${today.getFullYear()}-${String(today.getMonth()+1).padStart(2,'0')}-${String(today.getDate()).padStart(2,'0')}`;
+    const todayDisplay = today.toLocaleDateString('ko-KR', {month:'long', day:'numeric', weekday:'long'});
+    document.getElementById('todayStatus').textContent = `📅 오늘: ${todayDisplay}`;
+  },
+
+  loadData() {
+    try {
+      const saved = localStorage.getItem(this.storageKey);
+      if(saved) {
+        this.records = JSON.parse(saved);
+        console.log(`✅ ${this.records.length}개 기록 불러옴`);
+      }
+    } catch(e) { 
+      console.error('데이터 로드 실패:', e);
+      this.records = []; 
+    }
+  },
+
+  saveData() { 
+    try {
+      localStorage.setItem(this.storageKey, JSON.stringify(this.records));
+      console.log(`✅ 저장 완료 (총 ${this.records.length}개 기록)`);
+      return true;
+    } catch(e) {
+      console.error('❌ 저장 실패:', e);
+      document.getElementById('storageWarning').style.display = 'block';
+      return false;
+    }
+  },
+
+  loadTodayData() {
+    // 오늘 날짜의 기록 찾기
+    this.todayData = this.records.find(r => r.dateKey === this.todayKey);
+    
+    if(this.todayData) {
+      console.log('오늘 기록 있음:', this.todayData);
+      // 오늘 이미 운동한 세트 표시
+      this.restoreTodayButtons();
+      // 메모 복원
+      document.getElementById('note').value = this.todayData.note || '';
+    } else {
+      console.log('오늘 기록 없음 - 새로 시작');
+    }
+  },
+
+  restoreTodayButtons() {
+    if(!this.todayData) return;
+    
+    // 각 운동별로 완료한 세트 복원
+    const exercises = this.todayData.exercises || {};
+    
+    // 팔굽혀펴기
+    if(exercises.pushup) {
+      for(let i = 1; i <= exercises.pushup; i++) {
+        document.querySelector(`#pushupButtons .exercise-btn:nth-child(${i})`).classList.add('active', 'completed');
+      }
+    }
+    
+    // 윗몸일으키기
+    if(exercises.situp) {
+      for(let i = 1; i <= exercises.situp; i++) {
+        document.querySelector(`#situpButtons .exercise-btn:nth-child(${i})`).classList.add('active', 'completed');
+      }
+    }
+    
+    // 스쿼트
+    if(exercises.squat) {
+      for(let i = 1; i <= exercises.squat; i++) {
+        document.querySelector(`#squatButtons .exercise-btn:nth-child(${i})`).classList.add('active', 'completed');
+      }
+    }
+    
+    // 걷기
+    if(exercises.walk && exercises.walk > 0) {
+      document.querySelector('#walkButtons .exercise-btn').classList.add('active', 'completed');
+    }
+  },
+
+  createButtons() {
+    this.createExerciseButtons('pushupButtons', 5);
+    this.createExerciseButtons('situpButtons', 5);
+    this.createExerciseButtons('squatButtons', 5);
+    this.createExerciseButtons('walkButtons', 1);
+  },
+
+  createExerciseButtons(id, count) {
+    const container = document.getElementById(id);
+    container.innerHTML = '';
+    
+    for(let i = 1; i <= count; i++) {
+      const btn = document.createElement('button');
+      btn.className = 'exercise-btn';
+      btn.type = 'button';
+      btn.textContent = i + '세트';
+      
+      btn.addEventListener('click', () => { 
+        // 이미 완료된 세트는 해제 가능
+        if(btn.classList.contains('completed')) {
+          btn.classList.remove('active', 'completed');
+        } else {
+          btn.classList.add('active');
+        }
+        this.updateScore(); 
+        this.saveTempState(); // 클릭 즉시 임시 저장
+      });
+      
+      container.appendChild(btn);
+    }
+  },
+
+  getExerciseData() {
+    return {
+      pushup: document.querySelectorAll('#pushupButtons .active').length,
+      situp: document.querySelectorAll('#situpButtons .active').length,
+      squat: document.querySelectorAll('#squatButtons .active').length,
+      walk: document.querySelectorAll('#walkButtons .active').length
+    };
+  },
+
+  saveTempState() {
+    // 현재 체크된 운동 상태를 즉시 저장
+    const tempState = {
+      exercises: this.getExerciseData(),
+      note: document.getElementById('note').value,
+      dateKey: this.todayKey,
+      timestamp: Date.now()
+    };
+    
+    try {
+      localStorage.setItem('exerciseTempState', JSON.stringify(tempState));
+      console.log('✅ 임시 상태 자동 저장:', tempState.exercises);
+    } catch(e) {
+      console.error('임시 저장 실패:', e);
+    }
+  },
+
+  loadTempState() {
+    // 임시 저장된 상태 복원
+    try {
+      const saved = localStorage.getItem('exerciseTempState');
+      if(!saved) return;
+      
+      const tempState = JSON.parse(saved);
+      
+      // 오늘 날짜와 같은 경우만 복원
+      if(tempState.dateKey === this.todayKey) {
+        console.log('✅ 임시 상태 복원:', tempState.exercises);
+        
+        // 각 운동 버튼 복원
+        const exercises = tempState.exercises;
+        
+        // 팔굽혀펴기
+        for(let i = 1; i <= exercises.pushup; i++) {
+          document.querySelector(`#pushupButtons .exercise-btn:nth-child(${i})`)?.classList.add('active');
+        }
+        
+        // 윗몸일으키기
+        for(let i = 1; i <= exercises.situp; i++) {
+          document.querySelector(`#situpButtons .exercise-btn:nth-child(${i})`)?.classList.add('active');
+        }
+        
+        // 스쿼트
+        for(let i = 1; i <= exercises.squat; i++) {
+          document.querySelector(`#squatButtons .exercise-btn:nth-child(${i})`)?.classList.add('active');
+        }
+        
+        // 걷기
+        if(exercises.walk > 0) {
+          document.querySelector('#walkButtons .exercise-btn')?.classList.add('active');
+        }
+        
+        // 메모 복원
+        if(tempState.note) {
+          document.getElementById('note').value = tempState.note;
+        }
+        
+        this.updateScore();
+      } else {
+        // 날짜가 바뀌었으면 임시 상태 초기화
+        localStorage.removeItem('exerciseTempState');
+        console.log('날짜가 바뀌어 임시 상태 초기화');
+      }
+    } catch(e) {
+      console.error('임시 상태 복원 실패:', e);
+    }
+  },
+
+  calculateScore() {
+    const data = this.getExerciseData();
+    return Math.round(
+      (data.pushup / 5) * 20 + 
+      (data.situp / 5) * 24 + 
+      (data.squat / 5) * 25 + 
+      (data.walk / 1) * 31
+    );
+  },
+
+  updateScore() { 
+    const score = this.calculateScore();
+    const data = this.getExerciseData();
+    
+    document.getElementById('scoreDisplay').textContent = score + '점';
+    document.getElementById('pushupScore').textContent = data.pushup;
+    document.getElementById('situpScore').textContent = data.situp;
+    document.getElementById('squatScore').textContent = data.squat;
+    document.getElementById('walkScore').textContent = data.walk;
+  },
+
+  saveRecord() {
+    const score = this.calculateScore();
+    if(score === 0) { 
+      this.showHint('1세트 이상 선택하세요'); 
+      return; 
+    }
+    
+    const exercises = this.getExerciseData();
+    const note = document.getElementById('note').value.trim();
+    const now = new Date();
+    
+    // 오늘 기록이 있으면 업데이트, 없으면 새로 추가
+    const existingIndex = this.records.findIndex(r => r.dateKey === this.todayKey);
+    
+    const record = { 
+      id: existingIndex >= 0 ? this.records[existingIndex].id : Date.now(),
+      dateKey: this.todayKey,
+      date: now.toLocaleDateString('ko-KR'), 
+      time: now.toLocaleTimeString('ko-KR', {hour:'2-digit', minute:'2-digit'}), 
+      score: score,
+      exercises: exercises,
+      note: note, 
+      timestamp: now.getTime(),
+      lastUpdated: now.getTime()
+    };
+    
+    if(existingIndex >= 0) {
+      this.records[existingIndex] = record;
+      console.log('오늘 기록 업데이트:', record);
+      this.showHint(`✅ 오늘 운동 업데이트! (${score}점)`);
+    } else {
+      this.records.push(record);
+      console.log('새 날짜 기록 추가:', record);
+      this.showHint(`✅ 오늘 운동 저장! (${score}점)`);
+    }
+    
+    this.todayData = record;
+    
+    // 저장 성공 여부 확인
+    if(this.saveData()) {
+      // 완료된 버튼 표시 업데이트
+      document.querySelectorAll('.exercise-btn.active').forEach(btn => {
+        btn.classList.add('completed');
+      });
+      
+      this.updateAllUI();
+    } else {
+      alert('⚠️ 저장 실패! Chrome 설정을 확인하세요.');
+    }
+  },
+
+  resetToday() {
+    if(!confirm('오늘 운동을 모두 초기화하시겠습니까?')) return;
+    
+    // 버튼 초기화
+    document.querySelectorAll('.exercise-btn').forEach(btn => {
+      btn.classList.remove('active', 'completed');
+    });
+    
+    // 메모 초기화
+    document.getElementById('note').value = '';
+    
+    // 오늘 데이터 제거
+    this.records = this.records.filter(r => r.dateKey !== this.todayKey);
+    this.todayData = null;
+    
+    // 임시 상태도 제거
+    localStorage.removeItem('exerciseTempState');
+    
+    this.saveData();
+    this.updateAllUI();
+    this.showHint('오늘 운동이 초기화되었습니다');
+  },
+
+  deleteRecord(id) {
+    if(confirm('이 날짜의 기록을 삭제하시겠습니까?')) {
+      const record = this.records.find(r => r.id === id);
+      if(record && record.dateKey === this.todayKey) {
+        this.resetToday();
+      } else {
+        this.records = this.records.filter(r => r.id !== id);
+        this.saveData();
+        this.updateAllUI();
+        this.showHint('기록이 삭제되었습니다');
+      }
+    }
+  },
+
+  updateAllUI() {
+    this.updateScore();
+    this.updateRecordList();
+    this.updateChart();
+    this.updateStats();
+  },
+
+  updateRecordList() {
+    const list = document.getElementById('recordList');
+    
+    if(!this.records.length) { 
+      list.innerHTML = '<div class="empty-state">아직 기록이 없습니다 💪</div>'; 
+      return; 
+    }
+    
+    const sorted = this.records.slice().sort((a, b) => b.timestamp - a.timestamp);
+    list.innerHTML = '';
+    
+    sorted.forEach(r => {
+      const item = document.createElement('div'); 
+      item.className = r.dateKey === this.todayKey ? 'record-item today' : 'record-item';
+      
+      const exercises = r.exercises || {};
+      const exerciseText = [];
+      if(exercises.pushup) exerciseText.push(`팔 ${exercises.pushup}`);
+      if(exercises.situp) exerciseText.push(`윗몸 ${exercises.situp}`);
+      if(exercises.squat) exerciseText.push(`스쿼트 ${exercises.squat}`);
+      if(exercises.walk) exerciseText.push(`걷기 ${exercises.walk}`);
+      
+      const left = document.createElement('div'); 
+      left.style.flex = '1';
+      left.innerHTML = `
+        <strong style="display:block">${r.date} ${r.time} ${r.dateKey === this.todayKey ? '(오늘)' : ''}</strong>
+        <div style="margin-top:4px; font-size:0.9rem; opacity:0.9">${exerciseText.join(', ')}</div>
+        ${r.note ? `<div style="margin-top:4px; opacity:0.85">📝 ${this.escapeHtml(r.note)}</div>` : ''}
+      `;
+      
+      const right = document.createElement('div'); 
+      right.style.display = 'flex'; 
+      right.style.alignItems = 'center'; 
+      right.style.gap = '10px';
+      right.innerHTML = `<strong style="font-size:1.1rem">${r.score}점</strong>`;
+      
+      const del = document.createElement('button'); 
+      del.className = 'delete-btn'; 
+      del.type = 'button'; 
+      del.textContent = '삭제';
+      del.addEventListener('click', () => this.deleteRecord(r.id));
+      
+      right.appendChild(del); 
+      item.appendChild(left); 
+      item.appendChild(right); 
+      list.appendChild(item);
+    });
+  },
+
+  updateChart() {
+    const ctx = document.getElementById('scoreChart').getContext('2d');
+    
+    if(!this.records.length) { 
+      if(this.chart) {
+        this.chart.destroy(); 
+        this.chart = null;
+      } 
+      return; 
+    }
+    
+    const sorted = this.records.slice().sort((a, b) => a.timestamp - b.timestamp);
+    const last30 = sorted.slice(-30); // 최근 30일만 표시
+    
+    const labels = last30.map(r => {
+      const date = new Date(r.timestamp);
+      return `${date.getMonth()+1}/${date.getDate()}`;
+    });
+    const data = last30.map(r => r.score);
+    
+    if(this.chart) this.chart.destroy();
+    
+    this.chart = new Chart(ctx, { 
+      type: 'line', 
+      data: {
+        labels,
+        datasets: [{
+          label: '점수',
+          data,
+          borderColor: '#fbbf24',
+          backgroundColor: 'rgba(251,191,36,0.18)',
+          fill: true,
+          borderWidth: 3,
+          pointRadius: 5,
+          tension: 0.25
+        }]
+      }, 
+      options: {
+        maintainAspectRatio: false,
+        plugins: {
+          legend: {labels: {font: {size: 12}}},
+          tooltip: {mode: 'index', intersect: false}
+        }, 
+        scales: {
+          x: {ticks: {font: {size: 11}, maxRotation: 45, minRotation: 0}, grid: {display: false}}, 
+          y: {beginAtZero: true, max: 100, ticks: {font: {size: 12}}}
+        }
+      }
+    });
+  },
+
+  updateStats() {
+    const stats = document.getElementById('statsInfo');
+    if(!this.records.length) {
+      stats.style.display = 'none';
+      return;
+    }
+    
+    stats.style.display = 'block';
+    const total = this.records.length;
+    const avgScore = Math.round(this.records.reduce((sum, r) => sum + r.score, 0) / total);
+    const maxScore = Math.max(...this.records.map(r => r.score));
+    
+    // 최근 7일 평균
+    const week = new Date();
+    week.setDate(week.getDate() - 7);
+    const weekRecords = this.records.filter(r => r.timestamp > week.getTime());
+    const weekAvg = weekRecords.length > 0 
+      ? Math.round(weekRecords.reduce((sum, r) => sum + r.score, 0) / weekRecords.length)
+      : 0;
+    
+    stats.innerHTML = `📊 총 ${total}일 운동 | 전체평균 ${avgScore}점 | 7일평균 ${weekAvg}점 | 최고 ${maxScore}점`;
+  },
+
+  attachEventListeners() {
+    document.getElementById('saveBtn').addEventListener('click', () => this.saveRecord());
+    document.getElementById('resetBtn').addEventListener('click', () => this.resetToday());
+    
+    // 메모 입력 시 자동 저장
+    document.getElementById('note').addEventListener('input', () => {
+      this.saveTempState();
+    });
+    
+    document.getElementById('note').addEventListener('keydown', e => { 
+      if(e.ctrlKey && e.key === 'Enter') {
+        e.preventDefault(); 
+        this.saveRecord();
+      }
+    });
+    
+    document.getElementById('backupBtn').addEventListener('click', () => this.backupRecords());
+    document.getElementById('restoreBtn').addEventListener('click', () => document.getElementById('restoreInput').click());
+    document.getElementById('restoreInput').addEventListener('change', e => this.restoreRecords(e));
+  },
+
+  showHint(msg, duration = 2500) { 
+    const s = document.getElementById('todayStatus'); 
+    const orig = s.textContent; 
+    s.textContent = msg; 
+    s.style.background = '#10b981';
+    clearTimeout(this._hintTimer); 
+    this._hintTimer = setTimeout(() => {
+      s.textContent = orig;
+      s.style.background = '';
+    }, duration); 
+  },
+
+  backupRecords() {
+    if(!this.records.length) { 
+      this.showHint('저장된 기록이 없습니다'); 
+      return; 
+    }
+    const today = new Date().toISOString().split('T')[0];
+    const blob = new Blob([JSON.stringify(this.records, null, 2)], {type: 'application/json'});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a'); 
+    a.href = url; 
+    a.download = `exercise_backup_${today}.json`; 
+    a.click();
+    URL.revokeObjectURL(url);
+    this.showHint(`${this.records.length}개 기록 백업 완료`);
+  },
+
+  restoreRecords(e) {
+    const file = e.target.files[0]; 
+    if(!file) return;
+    
+    const reader = new FileReader();
+    reader.onload = () => { 
+      try { 
+        const data = JSON.parse(reader.result); 
+        if(Array.isArray(data)) { 
+          const confirmMsg = this.records.length > 0 
+            ? `현재 ${this.records.length}개 기록이 있습니다. 백업 파일(${data.length}개)로 교체하시겠습니까?`
+            : `${data.length}개 기록을 불러오시겠습니까?`;
+          
+          if(confirm(confirmMsg)) {
+            this.records = data; 
+            this.saveData(); 
+            this.loadTodayData();
+            this.updateAllUI();
+            this.showHint(`${data.length}개 기록 복원 완료!`); 
+          }
+        } else { 
+          this.showHint('올바른 백업 파일이 아닙니다'); 
+        } 
+      } catch(err) { 
+        console.error('복원 실패:', err);
+        this.showHint('파일 읽기 실패'); 
+      } 
+    };
+    reader.readAsText(file); 
+    e.target.value = '';
+  },
+
+  escapeHtml(str) { 
+    return str.replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); 
+  }
+};
+
+// 앱 시작
+document.addEventListener('DOMContentLoaded', () => exerciseApp.init());
+
+// Chrome 모바일 저장 문제 해결 안내
+if(/Android/i.test(navigator.userAgent)) {
+  console.log('📱 Android Chrome 감지됨');
+}
+</script>
+</body>
+</html>
