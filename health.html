@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -128,11 +127,11 @@ canvas{ width:100% !important; height:280px !important; display:block; margin-to
   <span>스쿼트: <span id="squatScore">0</span></span>
   <span>걷기: <span id="walkScore">0</span></span>
 </div>
-<small id="scoreHint">체크만 해도 자동 저장 | 누적 저장으로 오늘 기록 확정</small>
+<small id="scoreHint">체크만 해도 자동 저장 | 누적 저장으로 기록 확정 | 초기화는 체크만 해제</small>
 </div>
 
 <button class="save-btn" id="saveBtn">✅ 누적 저장 (오늘 운동 업데이트)</button>
-<button class="reset-btn" id="resetBtn">🔄 오늘 운동 초기화</button>
+<button class="reset-btn" id="resetBtn">🔄 체크 초기화 (기록은 유지)</button>
 <button class="backup-btn" id="backupBtn">💾 전체 기록 백업</button>
 <input type="file" id="restoreInput" accept=".json" style="display:none"/>
 <button class="restore-btn" id="restoreBtn">📂 백업 불러오기</button>
@@ -221,47 +220,39 @@ const exerciseApp = {
     this.todayData = this.records.find(r => r.dateKey === this.todayKey);
     
     if(this.todayData) {
-      console.log('오늘 기록 있음:', this.todayData);
-      // 오늘 이미 운동한 세트 표시
-      this.restoreTodayButtons();
-      // 메모 복원
-      document.getElementById('note').value = this.todayData.note || '';
+      console.log('오늘 저장된 기록 있음:', this.todayData);
+      // 오늘 이미 저장한 운동 표시 (completed로만 표시)
+      this.showSavedExercises();
     } else {
-      console.log('오늘 기록 없음 - 새로 시작');
+      console.log('오늘 저장된 기록 없음 - 새로 시작');
     }
   },
 
-  restoreTodayButtons() {
+  showSavedExercises() {
     if(!this.todayData) return;
     
-    // 각 운동별로 완료한 세트 복원
+    // 저장된 운동을 completed로만 표시 (active 없이)
     const exercises = this.todayData.exercises || {};
     
-    // 팔굽혀펴기
-    if(exercises.pushup) {
-      for(let i = 1; i <= exercises.pushup; i++) {
-        document.querySelector(`#pushupButtons .exercise-btn:nth-child(${i})`).classList.add('active', 'completed');
-      }
-    }
+    // 각 운동별로 저장된 개수만큼 표시
+    const groups = [
+      { id: 'pushupGroup', count: exercises.pushup },
+      { id: 'situpGroup', count: exercises.situp },
+      { id: 'squatGroup', count: exercises.squat },
+      { id: 'walkGroup', count: exercises.walk }
+    ];
     
-    // 윗몸일으키기
-    if(exercises.situp) {
-      for(let i = 1; i <= exercises.situp; i++) {
-        document.querySelector(`#situpButtons .exercise-btn:nth-child(${i})`).classList.add('active', 'completed');
+    groups.forEach(group => {
+      if(group.count && group.count > 0) {
+        const badge = document.createElement('span');
+        badge.className = 'completed-badge';
+        badge.textContent = `저장됨: ${group.count}세트`;
+        const container = document.getElementById(group.id);
+        const existing = container.querySelector('.completed-badge');
+        if(existing) existing.remove();
+        container.appendChild(badge);
       }
-    }
-    
-    // 스쿼트
-    if(exercises.squat) {
-      for(let i = 1; i <= exercises.squat; i++) {
-        document.querySelector(`#squatButtons .exercise-btn:nth-child(${i})`).classList.add('active', 'completed');
-      }
-    }
-    
-    // 걷기
-    if(exercises.walk && exercises.walk > 0) {
-      document.querySelector('#walkButtons .exercise-btn').classList.add('active', 'completed');
-    }
+    });
   },
 
   createButtons() {
@@ -446,39 +437,44 @@ const exerciseApp = {
   },
 
   resetToday() {
-    if(!confirm('오늘 운동을 모두 초기화하시겠습니까?')) return;
+    if(!confirm('현재 체크된 운동을 초기화하시겠습니까?\n(저장된 기록은 유지됩니다)')) return;
     
-    // 버튼 초기화
+    // 버튼 초기화 (체크된 것만)
     document.querySelectorAll('.exercise-btn').forEach(btn => {
-      btn.classList.remove('active', 'completed');
+      btn.classList.remove('active');  // completed는 유지 (이미 저장된 표시)
     });
     
     // 메모 초기화
     document.getElementById('note').value = '';
     
-    // 오늘 데이터 제거
-    this.records = this.records.filter(r => r.dateKey !== this.todayKey);
-    this.todayData = null;
-    
-    // 임시 상태도 제거
+    // 임시 상태만 제거 (저장된 기록은 유지)
     localStorage.removeItem('exerciseTempState');
     
-    this.saveData();
-    this.updateAllUI();
-    this.showHint('오늘 운동이 초기화되었습니다');
+    // 점수 업데이트
+    this.updateScore();
+    this.showHint('체크된 운동이 초기화되었습니다');
   },
 
   deleteRecord(id) {
-    if(confirm('이 날짜의 기록을 삭제하시겠습니까?')) {
-      const record = this.records.find(r => r.id === id);
-      if(record && record.dateKey === this.todayKey) {
-        this.resetToday();
-      } else {
-        this.records = this.records.filter(r => r.id !== id);
-        this.saveData();
-        this.updateAllUI();
-        this.showHint('기록이 삭제되었습니다');
+    const record = this.records.find(r => r.id === id);
+    const isToday = record && record.dateKey === this.todayKey;
+    
+    if(confirm(`${isToday ? '오늘' : '이 날짜'}의 기록을 완전히 삭제하시겠습니까?`)) {
+      this.records = this.records.filter(r => r.id !== id);
+      
+      if(isToday) {
+        // 오늘 기록이면 버튼도 초기화
+        document.querySelectorAll('.exercise-btn').forEach(btn => {
+          btn.classList.remove('active', 'completed');
+        });
+        document.getElementById('note').value = '';
+        localStorage.removeItem('exerciseTempState');
+        this.todayData = null;
       }
+      
+      this.saveData();
+      this.updateAllUI();
+      this.showHint('기록이 삭제되었습니다');
     }
   },
 
@@ -487,6 +483,7 @@ const exerciseApp = {
     this.updateRecordList();
     this.updateChart();
     this.updateStats();
+    this.showSavedExercises();
   },
 
   updateRecordList() {
