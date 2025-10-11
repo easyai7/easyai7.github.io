@@ -294,6 +294,12 @@
         .curriculum-item h3 {
             color: #1e3a8a;
             margin-bottom: 0.5rem;
+            font-size: 1.5rem;
+        }
+
+        .curriculum-item p {
+            font-size: 1rem;
+            line-height: 1.8;
         }
 
         .week-label {
@@ -470,12 +476,28 @@
             padding: 2rem;
         }
 
+        /* 모바일 최적화 - 커리큘럼 글씨 크게 */
         @media (max-width: 768px) {
             nav ul {
                 display: none;
             }
             .hero h1 {
                 font-size: 2rem;
+            }
+            
+            /* 커리큘럼 부분 모바일 최적화 */
+            .curriculum-item h3 {
+                font-size: 1.8rem;
+            }
+            
+            .curriculum-item p {
+                font-size: 1.3rem;
+                line-height: 2;
+            }
+            
+            .week-label {
+                font-size: 1.1rem;
+                padding: 0.5rem 1.2rem;
             }
         }
     </style>
@@ -893,5 +915,3 @@
     </footer>
 </body>
 </html>
-
-
