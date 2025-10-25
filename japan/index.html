@@ -1,0 +1,677 @@
+
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI活用講座 - ビジネスプロフェッショナル育成プログラム</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Hiragino Kaku Gothic ProN', 'Noto Sans JP', sans-serif;
+            line-height: 1.8;
+            color: #333;
+            background: linear-gradient(135deg, #8a8a8a 0%, #6a6a6a 100%);
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        header {
+            background: white;
+            padding: 50px 20px;
+            text-align: center;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+        
+        h1 {
+            font-size: 2.8em;
+            color: #3a3a3a;
+            margin-bottom: 15px;
+            font-weight: bold;
+        }
+        
+        .subtitle {
+            font-size: 1.4em;
+            color: #555;
+            margin-bottom: 10px;
+        }
+        
+        .tagline {
+            font-size: 1.1em;
+            color: #666;
+            font-weight: 300;
+        }
+        
+        .intro {
+            background: white;
+            padding: 40px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+        }
+        
+        .intro h2 {
+            color: #3a3a3a;
+            margin-bottom: 20px;
+            font-size: 1.8em;
+            border-left: 5px solid #5a5a5a;
+            padding-left: 15px;
+        }
+        
+        .intro p {
+            font-size: 1.1em;
+            margin-bottom: 15px;
+            line-height: 1.9;
+        }
+        
+        .section-title {
+            color: white;
+            text-align: center;
+            margin: 40px 0 30px 0;
+            font-size: 2.2em;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        .business-track {
+            background: white;
+            padding: 40px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+        }
+        
+        .business-track h2 {
+            color: #3a3a3a;
+            text-align: center;
+            margin-bottom: 15px;
+            font-size: 2em;
+        }
+        
+        .business-track .subtitle-text {
+            text-align: center;
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 1.1em;
+        }
+        
+        .track-levels {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+        
+        .level-card {
+            background: linear-gradient(135deg, #f8f8f8 0%, #e8e8e8 100%);
+            padding: 35px;
+            border-radius: 15px;
+            border: 2px solid #5a5a5a;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        
+        .level-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+        
+        .level-badge {
+            display: inline-block;
+            background: #5a5a5a;
+            color: white;
+            padding: 8px 20px;
+            border-radius: 20px;
+            font-size: 0.9em;
+            font-weight: bold;
+            margin-bottom: 15px;
+        }
+        
+        .level-card h3 {
+            color: #3a3a3a;
+            font-size: 1.6em;
+            margin-bottom: 15px;
+        }
+        
+        .level-card .duration {
+            color: #666;
+            margin-bottom: 15px;
+            font-weight: bold;
+        }
+        
+        .level-card ul {
+            list-style: none;
+            margin-bottom: 15px;
+        }
+        
+        .level-card li {
+            padding: 8px 0;
+            padding-left: 25px;
+            position: relative;
+            color: #444;
+        }
+        
+        .level-card li:before {
+            content: "▸";
+            position: absolute;
+            left: 0;
+            color: #5a5a5a;
+            font-weight: bold;
+        }
+        
+        .specialized-courses {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .spec-card {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            transition: transform 0.3s;
+        }
+        
+        .spec-card:hover {
+            transform: translateY(-3px);
+        }
+        
+        .spec-card h3 {
+            color: #3a3a3a;
+            margin-bottom: 15px;
+            font-size: 1.3em;
+            display: flex;
+            align-items: center;
+        }
+        
+        .spec-icon {
+            font-size: 1.5em;
+            margin-right: 10px;
+        }
+        
+        .spec-card ul {
+            list-style: none;
+        }
+        
+        .spec-card li {
+            padding: 5px 0;
+            padding-left: 20px;
+            position: relative;
+            font-size: 0.95em;
+            color: #555;
+        }
+        
+        .spec-card li:before {
+            content: "•";
+            position: absolute;
+            left: 0;
+            color: #4a4a4a;
+        }
+        
+        .other-courses {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+        
+        .course-card {
+            background: white;
+            padding: 35px;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        
+        .course-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+        
+        .course-card h3 {
+            color: #3a3a3a;
+            font-size: 1.6em;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .course-icon {
+            font-size: 1.5em;
+            margin-right: 10px;
+        }
+        
+        .course-card .target {
+            background: #f5f5f5;
+            padding: 10px 15px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            font-weight: bold;
+            color: #4a4a4a;
+        }
+        
+        .course-card ul {
+            list-style: none;
+            margin-bottom: 15px;
+        }
+        
+        .course-card li {
+            padding: 8px 0;
+            padding-left: 25px;
+            position: relative;
+        }
+        
+        .course-card li:before {
+            content: "✓";
+            position: absolute;
+            left: 0;
+            color: #4a4a4a;
+            font-weight: bold;
+        }
+        
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+        
+        .feature-box {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+        
+        .feature-box h3 {
+            color: #3a3a3a;
+            margin-bottom: 15px;
+            font-size: 1.3em;
+        }
+        
+        .feature-icon-big {
+            font-size: 3em;
+            margin-bottom: 15px;
+        }
+        
+        .feature-box p {
+            color: #666;
+            font-size: 0.95em;
+        }
+        
+        .philosophy {
+            background: white;
+            padding: 40px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+        }
+        
+        .philosophy h2 {
+            color: #3a3a3a;
+            margin-bottom: 25px;
+            font-size: 1.8em;
+            text-align: center;
+        }
+        
+        .philosophy-content {
+            background: #f8f8f8;
+            padding: 30px;
+            border-radius: 10px;
+            border-left: 5px solid #5a5a5a;
+        }
+        
+        .philosophy-content h3 {
+            color: #3a3a3a;
+            margin-bottom: 15px;
+            font-size: 1.4em;
+        }
+        
+        .philosophy-content p {
+            margin-bottom: 15px;
+            line-height: 1.9;
+            color: #555;
+        }
+        
+        .instructor {
+            background: white;
+            padding: 40px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+        }
+        
+        .instructor h2 {
+            color: #2c2c2c;
+            margin-bottom: 20px;
+            font-size: 1.8em;
+            text-align: center;
+        }
+        
+        .instructor-info h3 {
+            color: #2c2c2c;
+            margin-bottom: 20px;
+            font-size: 1.5em;
+        }
+        
+        .instructor-info p {
+            margin-bottom: 12px;
+            font-size: 1.05em;
+            color: #555;
+        }
+        
+        .instructor-quote {
+            margin-top: 25px;
+            padding: 25px;
+            background: #f8f8f8;
+            border-left: 4px solid #5a5a5a;
+            font-style: italic;
+            color: #444;
+        }
+        
+        .cta {
+            background: linear-gradient(135deg, #6a6a6a 0%, #4a4a4a 100%);
+            color: white;
+            padding: 50px;
+            border-radius: 15px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+        
+        .cta h2 {
+            font-size: 2em;
+            margin-bottom: 20px;
+        }
+        
+        .cta p {
+            font-size: 1.2em;
+            margin-bottom: 30px;
+        }
+        
+        .cta-button {
+            display: inline-block;
+            background: white;
+            color: #5a5a5a;
+            padding: 18px 50px;
+            border-radius: 30px;
+            text-decoration: none;
+            font-size: 1.2em;
+            font-weight: bold;
+            transition: transform 0.3s, box-shadow 0.3s;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+        
+        .cta-button:hover {
+            transform: scale(1.05);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+        }
+        
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2em;
+            }
+            
+            .subtitle {
+                font-size: 1.2em;
+            }
+            
+            .section-title {
+                font-size: 1.8em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>AI活用アカデミー</h1>
+            <p class="subtitle">プロフェッショナルのためのAI実践教育</p>
+            <p class="tagline">技術×哲学×人生の意味を探求する学びの場</p>
+        </header>
+
+        <div class="intro">
+            <h2>AIの時代を、あなたの成長の機会に</h2>
+            <p>人工知能（AI）の急速な発展により、ビジネスの世界は大きく変化しています。この変革期において、単にツールを使えるだけでなく、<strong>戦略的にAIを活用できる人材</strong>が求められています。</p>
+            <p>当アカデミーは、初心者から上級者まで、体系的にAI活用スキルを習得できる<strong>日本唯一の包括的プログラム</strong>です。実務直結の技術習得に加え、AI時代における倫理、人間の価値、人生の意義について深く考察します。</p>
+            <p>16年間の日本宣教経験を持つ講師が、<strong>技術と人間性の調和</strong>を大切にしながら、皆様の成長を全力でサポートします。</p>
+        </div>
+
+        <h2 class="section-title">💼 ビジネスプロフェッショナル育成プログラム</h2>
+
+        <div class="business-track">
+            <h2>体系的3段階学習トラック</h2>
+            <p class="subtitle-text">2026年5月は初級コースから開講、中級・上級は2026年後半期より順次開講予定</p>
+            
+            <div class="track-levels">
+                <div class="level-card">
+                    <span class="level-badge">初級</span>
+                    <h3>ビジネスパーソン向け AI活用基礎コース</h3>
+                    <p style="color: #3a3a3a; font-weight: bold; margin-bottom: 10px;">✓ 2026年5月開講</p>
+                    <p class="duration">📅 全8週（週1回・2時間）</p>
+                    <p><strong>対象：</strong>会社員・自営業者・AI初心者</p>
+                    <ul>
+                        <li>AIとプロンプトエンジニアリング基礎</li>
+                        <li>業務文書の自動化（メール・報告書・議事録）</li>
+                        <li>データ整理と基本分析（Excel × AI）</li>
+                        <li>プレゼンテーション資料作成</li>
+                        <li>個人生産性システム構築</li>
+                        <li>実務プロジェクト発表</li>
+                    </ul>
+                    <p style="color: #3a3a3a; font-weight: bold; margin-top: 15px;">✓ 業務時間を70%削減</p>
+                </div>
+
+                <div class="level-card">
+                    <span class="level-badge">中級</span>
+                    <h3>ビジネスAI実践コース</h3>
+                    <p style="color: #888; font-size: 0.95em; margin-bottom: 10px;">※ 2026年後半期開講予定</p>
+                    <p class="duration">📅 全10週（週1回・2.5時間）</p>
+                    <p><strong>対象：</strong>AI基礎習得者、高度な実務活用を目指す方</p>
+                    <ul>
+                        <li>高度なプロンプト技法（Chain-of-Thought、Few-shot）</li>
+                        <li>業界別カスタマイズ活用（製造・IT・金融・サービス）</li>
+                        <li>データ分析と可視化（Python基礎 × AI協働）</li>
+                        <li>マーケティング自動化（コンテンツ・SNS戦略）</li>
+                        <li>ワークフロー自動化（Zapier、Make.com）</li>
+                        <li>実務プロジェクト（自社業務へのAI適用）</li>
+                    </ul>
+                    <p style="color: #3a3a3a; font-weight: bold; margin-top: 15px;">✓ 分析速度を5倍向上</p>
+                </div>
+
+                <div class="level-card">
+                    <span class="level-badge">上級</span>
+                    <h3>AI戦略リーダーコース</h3>
+                    <p style="color: #888; font-size: 0.95em; margin-bottom: 10px;">※ 2026年後半期開講予定</p>
+                    <p class="duration">📅 全12週（週1回・3時間）</p>
+                    <p><strong>対象：</strong>管理職、AI導入責任者、経営層</p>
+                    <ul>
+                        <li>AI戦略立案とROI分析</li>
+                        <li>組織AI導入ロードマップ設計</li>
+                        <li>AI倫理とリスクマネジメント</li>
+                        <li>社内AI教育プログラム開発</li>
+                        <li>業界AIトレンドと競争力分析</li>
+                        <li>最終プロジェクト（企業AI転換戦略書）</li>
+                    </ul>
+                    <p style="color: #3a3a3a; font-weight: bold; margin-top: 15px;">✓ 組織変革をリード</p>
+                </div>
+            </div>
+        </div>
+
+        <h2 class="section-title">🎯 専門特化コース</h2>
+        <p style="text-align: center; color: white; margin-bottom: 20px; font-size: 1.1em;">Python基礎は2026年5月開講、その他は2026年後半期より順次開講</p>
+
+        <div class="specialized-courses">
+            <div class="spec-card">
+                <h3><span class="spec-icon">📊</span>データサイエンスAI</h3>
+                <p style="color: #888; font-size: 0.9em; margin-bottom: 10px;">※ 2027年以降開講予定</p>
+                <ul>
+                    <li>Python + Pandas基礎</li>
+                    <li>AIを活用したデータ分析</li>
+                    <li>統計分析とインサイト導出</li>
+                    <li>ビジネスダッシュボード作成</li>
+                    <li>予測モデリング入門</li>
+                </ul>
+            </div>
+
+            <div class="spec-card">
+                <h3><span class="spec-icon">📢</span>マーケティングAI</h3>
+                <ul>
+                    <li>AI活用の顧客分析</li>
+                    <li>コンテンツマーケティング自動化</li>
+                    <li>SEO最適化戦略</li>
+                    <li>広告コピーA/Bテスト</li>
+                    <li>SNS戦略立案</li>
+                </ul>
+            </div>
+
+            <div class="spec-card">
+                <h3><span class="spec-icon">💻</span>Python基礎コース</h3>
+                <p style="color: #3a3a3a; font-weight: bold; margin-bottom: 10px;">✓ 2026年5月開講</p>
+                <ul>
+                    <li>ChatGPTと一緒に学ぶPython</li>
+                    <li>プログラミング基礎概念</li>
+                    <li>簡単な業務自動化スクリプト</li>
+                    <li>データ処理の基本</li>
+                    <li>実践的なミニプロジェクト</li>
+                </ul>
+            </div>
+
+            <div class="spec-card">
+                <h3><span class="spec-icon">⚡</span>業務効率化マスター</h3>
+                <ul>
+                    <li>RPAとAIの統合</li>
+                    <li>ノーコード/ローコードツール</li>
+                    <li>プロセス自動化設計</li>
+                    <li>クラウド統合技術</li>
+                    <li>生産性測定と改善</li>
+                </ul>
+            </div>
+        </div>
+
+        <h2 class="section-title">👨‍👩‍👧 その他のコース</h2>
+
+        <div class="other-courses">
+            <div class="course-card">
+                <h3><span class="course-icon">🏠</span>主婦・主夫コース</h3>
+                <div class="target">✓ 2026年5月開講</div>
+                <ul>
+                    <li>スマートフォンで始めるAI</li>
+                    <li>料理レシピと健康管理</li>
+                    <li>家計簿管理とショッピング補助</li>
+                    <li>お子様の学習サポート</li>
+                    <li>写真編集と思い出整理</li>
+                </ul>
+                <p style="color: #5a5a5a; font-weight: bold;">全6週 / 週1回 1.5時間</p>
+            </div>
+
+            <div class="course-card">
+                <h3><span class="course-icon">👴</span>シニアコース</h3>
+                <div class="target">✓ 2026年5月開講</div>
+                <ul>
+                    <li>ゆっくり丁寧に基礎から</li>
+                    <li>スマートフォンと仲良くなる</li>
+                    <li>お孫さんとのコミュニケーション</li>
+                    <li>健康情報の検索と管理</li>
+                    <li>日記や回顧録の作成</li>
+                </ul>
+                <p style="color: #5a5a5a; font-weight: bold;">全4週 / 週1回 1時間</p>
+            </div>
+        </div>
+
+        <h2 class="section-title">🌟 当アカデミーの強み</h2>
+
+        <div class="features-grid">
+            <div class="feature-box">
+                <div class="feature-icon-big">📈</div>
+                <h3>測定可能な成果</h3>
+                <p>受講前後で業務効率70%向上、データ分析速度5倍、アイデア発想10倍増加を実現</p>
+            </div>
+
+            <div class="feature-box">
+                <div class="feature-icon-big">💼</div>
+                <h3>実務直結プロジェクト</h3>
+                <p>自分の実際の業務に即座に適用できるポートフォリオを作成</p>
+            </div>
+
+            <div class="feature-box">
+                <div class="feature-icon-big">👥</div>
+                <h3>1対1コンサルティング</h3>
+                <p>個別業務に合わせた指導、キャリア相談、AI活用ロードマップ作成</p>
+            </div>
+
+            <div class="feature-box">
+                <div class="feature-icon-big">🤝</div>
+                <h3>コミュニティ構築</h3>
+                <p>修了生ネットワーク、定期勉強会、最新トレンド共有、就転職情報交換</p>
+            </div>
+
+            <div class="feature-box">
+                <div class="feature-icon-big">🎓</div>
+                <h3>認定資格取得</h3>
+                <p>AI Business Professional認定、実務プロジェクトポートフォリオ、LinkedIn掲載可能な証明書</p>
+            </div>
+
+            <div class="feature-box">
+                <div class="feature-icon-big">📚</div>
+                <h3>生涯学習サポート</h3>
+                <p>修了後も最新情報提供、アップデート講座、コミュニティイベント参加権</p>
+            </div>
+        </div>
+
+        <div class="philosophy">
+            <h2>🧭 学びの旅：技術から哲学、そして人生の意味へ</h2>
+            <div class="philosophy-content">
+                <h3>私たちの教育哲学</h3>
+                <p>AIは単なる道具ではありません。AIの発展は、<strong>「人間とは何か？」「人生の意味は？」「善悪の基準は？」</strong>という根本的な問いを私たちに突きつけています。</p>
+                <p>当アカデミーでは、実用的なスキル習得から始まり、AI倫理、哲学的思考、そして人生の意義について段階的に探求していきます。</p>
+                <p><strong>Phase 1：</strong> 実用的なAI活用スキル習得<br>
+                <strong>Phase 2：</strong> AIと変化する世界の理解<br>
+                <strong>Phase 3：</strong> AI倫理と哲学的問い<br>
+                <strong>Phase 4：</strong> 価値観と世界観の探求<br>
+                <strong>Phase 5：</strong> 人生の意味と新しい可能性</p>
+                <p style="margin-top: 20px; font-weight: bold; color: #3a3a3a;">技術を学びながら、人間としての深みを増していく。それが私たちの目指す教育です。</p>
+            </div>
+        </div>
+
+        <div class="instructor">
+            <h2>👨‍🏫 講師紹介</h2>
+            <div class="instructor-info">
+                <h3>全 昇大（ジョン・スンデ）</h3>
+                <p>📖 <strong>神学</strong>：韓国総神神学校卒業、改革派神学専攻</p>
+                <p>🇯🇵 <strong>日本経験</strong>：16年間の日本宣教、70名への韓国語教育、日本文化・言語に精通</p>
+                <p>💻 <strong>IT専門家</strong>：DOS時代からの豊富な経験、2万人規模のマルチメディアコミュニティリーダー、Flash ActionScript プログラミング講師</p>
+                <p>🤖 <strong>AI教育者</strong>：韓国の牧師・宣教師向けAI活用専門講師、2025年11月「AI Ministry Academy」開講</p>
+                <p>📚 <strong>実績</strong>：578以上のAI活用対話記録、実践的教材開発、書籍「AI宣教活用ガイド」出版予定</p>
+                <p>🎯 <strong>教育理念</strong>：技術と信仰、実用性と深い思考、効率性と人間の温かさの統合</p>
+                
+                <div class="instructor-quote">
+                    「AIは道具です。しかし、その道具をどう使うかは、私たちの人生観、価値観によって決まります。技術を学びながら、人間としての深みを増していく。それが真の教育だと信じています。皆さんと一緒に学び、成長できることを楽しみにしています。」
+                </div>
+                
+                <p style="margin-top: 20px; font-size: 0.85em; color: #888; text-align: right;">※ この講師紹介は、Claude AI（Anthropic社）による客観的な分析に基づいて作成されています。</p>
+            </div>
+        </div>
+
+        <div class="cta">
+            <h2>🚀 新しい未来を一緒に創りましょう</h2>
+            <p><strong>2026年5月開講</strong>｜初級・主婦・シニア・Python基礎コース</p>
+            <p>中級・上級コースは2026年後半期より順次開講予定</p>
+            <p style="margin-top: 20px;">まずはお気軽にお問い合わせください</p>
+            <a href="http://pf.kakao.com/_SrxfNn" class="cta-button">カカオトークで問い合わせる</a>
+            <p style="margin-top: 25px; font-size: 1em;">📧 メール：aomori91@naver.com</p>
+            <p style="font-size: 0.9em; margin-top: 15px;">無料相談・コース説明会も随時開催中</p>
+        </div>
+    </div>
+</body>
+</html>
